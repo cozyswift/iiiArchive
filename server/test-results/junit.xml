@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="1" failures="0" time="2.711">
+  <testsuite name="머테리얼 쿼리" errors="0" failures="0" skipped="0" timestamp="2020-03-05T09:27:45" time="2.271" tests="1">
+    <testcase classname="머테리얼 쿼리 모든 사료데이터를 가져와야 한다" name="머테리얼 쿼리 모든 사료데이터를 가져와야 한다" time="0.031">
+    </testcase>
+  </testsuite>
+</testsuites>

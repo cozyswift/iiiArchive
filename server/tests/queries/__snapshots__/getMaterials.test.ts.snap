@@ -1,0 +1,90 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`머테리얼 쿼리 모든 사료데이터를 가져와야 한다 1`] = `
+Object {
+  "materials": Array [
+    Object {
+      "archivist": "주강민",
+      "id": "1",
+      "material": Object {
+        "createdAt": "2020-03-04T16:47:48.125Z",
+        "description": "박근혜는 하야하라",
+        "id": "1",
+        "identificationNum": Array [
+          "ad003-A00008",
+        ],
+        "keyword": Array [
+          "서면",
+          "박근혜퇴진본부",
+          "하야",
+          "퇴진",
+        ],
+        "materialType": Object {
+          "id": "1",
+          "typeName": "jpg",
+        },
+        "picture": "http://iiiarchives.org/wp-content/uploads/2018/11/ad003-A-00008-min-1024x205.jpg",
+        "title": "현수막(4)",
+      },
+    },
+    Object {
+      "archivist": "조수정",
+      "id": "2",
+      "material": Object {
+        "createdAt": "2020-03-04T16:47:48.125Z",
+        "description": "박근혜 파면이 결정된 3월 10일의 131차 시국집회의 모습이다.",
+        "id": "2",
+        "identificationNum": Array [
+          "pi003-A-00275",
+          "pi003-A-00276",
+          "pi003-A-00277",
+          "pi003-A-00278",
+          "pi003-A-00279",
+          "pi003-B-00099",
+          "pi003-B-00100",
+          "pi003-B-00101",
+          "pi003-B-00102",
+          "pi003-B-00103",
+          "pi003-B-00104",
+          "pi003-B-00105",
+        ],
+        "keyword": Array [
+          "서면",
+          "시국집회",
+          "탄핵인용",
+          "촛불승리",
+          "거리행진",
+        ],
+        "materialType": Object {
+          "id": "1",
+          "typeName": "jpg",
+        },
+        "picture": "http://iiiarchives.org/wp-content/uploads/collection/picture/003/170310%20%EC%B4%9B%EB%B6%88%EC%8A%B9%EB%A6%AC%20%EC%8B%9C%EA%B5%AD%EC%A7%91%ED%9A%8C/pi003-B-00103-1024x683.jpg",
+        "title": "170310 촛불승리 시국집회",
+      },
+    },
+    Object {
+      "archivist": "주강수",
+      "id": "3",
+      "material": Object {
+        "createdAt": "2020-03-04T16:47:48.125Z",
+        "description": "1월 25일 부산시국집회의 모습이다.",
+        "id": "3",
+        "identificationNum": null,
+        "keyword": Array [
+          "서면",
+          "시국집회",
+          "천주교단체",
+          "거리행진",
+        ],
+        "materialType": Object {
+          "id": "1",
+          "typeName": "jpg",
+        },
+        "picture": "http://iiiarchives.org/wp-content/uploads/collection/picture/003/170125%20%EB%B9%84%EC%A3%BC%EB%A5%98%EC%82%AC%EC%A7%84%EA%B4%80%20%EC%B2%9C%EC%A3%BC%EA%B5%90%EB%8B%A8%EC%B2%B4%20%EC%8B%9C%EA%B5%AD%EB%8C%80%ED%9A%8C/pi003-B-00081-1024x683.jpg",
+        "title": "170125 천주교단체 시국집회",
+      },
+    },
+  ],
+}
+`;

@@ -7,40 +7,38 @@ const typeDefs=`
 scalar Date
 scalar URL
 
+
 type Keywords {
     id:ID!
-    keyword:String!
+    keyword:String
 }
 
 type MaterialTypes {
     id:ID!
-    typeName:String!
+    typeName:String
 }
 
-type Donor{
-    donor:String!
-}
 
 type Material {
     id:ID!
-    title:String!
+    title:String
     description:String
-    picture:URL!
-    createdAt:Date!
-    materialType:MaterialTypes!
-    donor:[Donor!]
-    keyword:[Keywords!]!
-    identificationNum:String!
+    picture:URL
+    createdAt:Date
+    materialType:MaterialTypes
+    donor:[String]
+    keyword:[String]
+    identificationNum:[String]
 }
 
 type Materials {
     id:ID!
-    archivist:String!
-    material:Material!
+    archivist:String
+    material:Material
 }
 
 type Query {
-    materials:[Materials!]!
+    materials:[Materials]
 }
 
 
