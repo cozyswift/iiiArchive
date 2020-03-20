@@ -1,3 +1,4 @@
+#schema: http://localhost:4000/graphql
 schema: ./schema/typeDefs.graphql
 overwrite: true
 generates:
@@ -9,7 +10,7 @@ generates:
       mappers:
         # import { Message } from '../db'
         # The root types of Message resolvers
-        Keywords: ../db#keywords
+        Keywords: ../db#Keywords
         ImageArr: ../db#ImageArr
         MaterialTypes: ../db#MaterialTypes        
         Material: ../db#Material

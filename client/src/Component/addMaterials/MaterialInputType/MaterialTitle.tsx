@@ -3,6 +3,7 @@ import { createStyles, makeStyles, withStyles, Theme } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 
 
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -15,7 +16,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const ValidationTextField = withStyles({
+const ValidationTitleField = withStyles({
   root: {
     // + filedset을 선택한다 //인접 선택자
     "& input:valid + fieldset": {
@@ -33,27 +34,26 @@ const ValidationTextField = withStyles({
   }
 })(TextField);
 
-interface MaterialPictureParam {
+interface MaterialTitleParam {
   //  setTitleValue(title:string):any;
   //  titleValue:string;
   onMaterialChange(event: any): any;
   newMaterial: any;
 }
 
-function MaterialInputType({
+function MaterialTitle({
   onMaterialChange,
   newMaterial
-}: MaterialPictureParam) {
+}: MaterialTitleParam) {
   const classes = useStyles();
-  console.log(newMaterial)
+ 
 
   // const onTitleChange=({target}:any)=>{
   //     setTitleValue(target.value);
   // }
 
   return (
-    <React.Fragment>
-      <ValidationTextField
+      <ValidationTitleField
         className={classes.margin}
         label="제목"
         required
@@ -64,20 +64,20 @@ function MaterialInputType({
         id="validation-outlined-input"
         onChange={onMaterialChange}
       />
-
-      <ValidationTextField
-        className={classes.margin}
-        label="내용"
-        required
-        variant="outlined"
-        name="description"
-        value={newMaterial.description}
+// {/* 
+//       <ValidationTextField
+//         className={classes.margin}
+//         label="내용"
+//         required
+//         variant="outlined"
+//         name="description"
+//         value={newMaterial.description}
         
-        id="validation-outlined-input"
-        onChange={onMaterialChange}
-      />
-    </React.Fragment>
+//         id="validation-outlined-input"
+//         onChange={onMaterialChange}
+//       /> */}
+ 
   );
 }
 
-export default MaterialInputType;
+export default MaterialTitle;

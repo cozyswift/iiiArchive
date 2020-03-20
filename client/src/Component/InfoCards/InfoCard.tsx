@@ -1,25 +1,12 @@
 import React from "react";
-import {
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  CardActions,
-  CardMedia,
-  makeStyles,
-  Theme,
-  createStyles,
-  CardActionArea,
-  Paper,
-  Container,
-  Grid
-} from "@material-ui/core";
-import SVGBorder from "./SVGBorder";
-import { useState, useMemo, useCallback } from "react";
+import { makeStyles, Theme, createStyles, Grid, Paper, Card, CardContent, Typography, CardActionArea, Button, CardActions, CardMedia } from "@material-ui/core";
+import { useCallback } from "react";
 import { History } from "history";
-import gql from "graphql-tag";
 import { useApolloClient, useQuery } from "@apollo/react-hooks";
-import * as fragments from "../../graphql/fragment";
+// import { useGetMaterialListQuery } from "../../graphql/types";
+import * as queries from "../../graphql/queries";
+import { material } from "../../graphql/fragment";
+import SVGBorder from "./SVGBorder";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -71,25 +58,27 @@ interface MaterialsListProps {
   history: History;
 }
 
-export const getMaterialList = gql`
-  query GetMaterials {
-    materialList {
-      id
-      title
-      archivistId
-      keyword
-      picture {
-        examUrl
-      }
-    }
-  }
+// export const getMaterialList = gql`
+//   query GetMaterialList {
+//     materialList {
+//       id
+//       title
+//       archivistId
+//       keyword
+//       picture {
+//         examUrl
+//       }
+//     }
+//   }
 
-`;
+// `;
 
 function InfoCard({ history }: MaterialsListProps) {
   const classes = useStyles();
   const client = useApolloClient();
-  const { loading, error, data } = useQuery<any>(getMaterialList);
+  const { loading, error, data } = useQuery<any>(queries.materialList);
+
+  // const { loading, error, data } = useGetMaterialListQuery();
 
   // const [materials, setMaterials] = useState<any>([]);
 
@@ -130,18 +119,21 @@ function InfoCard({ history }: MaterialsListProps) {
   }
 
   let materialList = data.materialList;
+
   client.writeQuery({
-    query: getMaterialList,
+    query: queries.materialList,
     data: {
       materialList
     }
   });
 
-  console.log("1", client.store);
+  // console.log("1", client.store);
+
+  // console.log(materialList);
 
   return (
     <Grid container direction="row" justify="center" alignItems="center">
-      {materialList.map((material: any) => (
+      {materialList?.map((material: any) => (
         <Paper elevation={0} className={classes.root} key={material.id}>
           <Card className={classes.cardStyle}>
             <CardActionArea onClick={navToMaterials.bind(null, material)}>
@@ -174,7 +166,7 @@ function InfoCard({ history }: MaterialsListProps) {
           </Card>
         </Paper>
       ))}
-    </Grid>
+    </Grid>   
   );
 }
 

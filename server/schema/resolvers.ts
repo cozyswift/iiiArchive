@@ -1,8 +1,15 @@
 import { DateTimeResolver, URLResolver } from 'graphql-scalars';
-import {materialList,imgList,Material,ImageArr,MaterialTypes,keyword} from '../db';
-
+import {
+  materialList,
+  imgList,
+  Material,
+  ImageArr,
+  MaterialTypes,
+  Keyword,
+} from '../db';
+// import {Resolvers}from '../types/graphql'
 const resolvers = {
-  Date: DateTimeResolver,
+  DateTime: DateTimeResolver,
   URL: URLResolver,
 
   Material: {
@@ -10,12 +17,10 @@ const resolvers = {
     //   return materialTypes.find(mTypes => mTypes.typeName === 'jpg');
     // },
 
-    picture(root: any) {
-     
-      const result = imgList.filter(word => word.materialId==root.id);
+    picture(root: { id: string }) {
+      const result = imgList.filter(img => img.materialId == root.id);
 
-   
-      return result
+      return result;
     },
   },
 
@@ -25,20 +30,15 @@ const resolvers = {
   //   },
   // },
 
-  
-
   Query: {
     materialList() {
-  
       return materialList;
     },
 
     material(root: any, { materialId }: any) {
-      
       const result = materialList.find(m => m.id === materialId);
-     
-     
-      return result;
+
+      return result || null;
     },
 
     // archivistID({ archivistId }: any){
@@ -49,32 +49,32 @@ const resolvers = {
     //     return archivist;
     //   }
     // }
-    
   },
 
   Mutation: {
-    addMaterial(root: any, { title,archivistId }: any) {
+    addMaterial(root: any, { title, archivistId }: any) {
       console.log('root', { root });
       console.log('title', { title });
       console.log('archivis', { archivistId });
 
-
       const newMaterialId = (materialList.length + 1).toString();
-      console.log({newMaterialId});
+      console.log({ newMaterialId });
       const newArchivistId = archivistId;
       const newDescription = 'test';
-      const imgArr={
-        id:(imgList.length+1).toString(),
-        regUser:archivistId,
-        fileName:"네임 테스트",
-        examUrl:["https://images.unsplash.com/photo-1461360370896-922624d12aa1?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=753&q=80%22"],
-        width:"",
-        height:"",
-        tag:["tag"],
-        regIp:"",
-        fileType:"jpg",
-        materialId:newMaterialId
-    };
+      const imgArr = {
+        id: (imgList.length + 1).toString(),
+        regUser: archivistId,
+        fileName: '네임 테스트',
+        examUrl: [
+          'https://images.unsplash.com/photo-1461360370896-922624d12aa1?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=753&q=80%22',
+        ],
+        width: '',
+        height: '',
+        tag: ['tag'],
+        regIp: '',
+        fileType: 'jpg',
+        materialId: newMaterialId,
+      };
 
       const newCreatedAt = new Date();
       const newCreator = 'test';
@@ -85,13 +85,13 @@ const resolvers = {
       const newTitle = title;
 
       imgList.push(imgArr);
-      
+
       const newMaterial = {
         id: newMaterialId,
         archivistId: newArchivistId,
         title: newTitle,
         description: newDescription,
-        picture: [imgList.find(m=>m.materialId===newMaterialId)],
+        picture: [imgList.find(m => m.materialId === newMaterialId)],
         createdAt: newCreatedAt,
         creator: newCreator,
         materialType: newMaterialType,
@@ -100,23 +100,28 @@ const resolvers = {
         identificationNum: newIdentificationNum,
       };
 
-      console.log({newMaterial});
       materialList.push(newMaterial);
-      
 
       // console.log({imageArr})
       // console.log({material});
-      
-      
-      const result=materialList.map((m)=>{
-        materialList.find(m=>{m.archivistId===archivistId})  ;
+
+      const result = materialList.map(m => {
+        materialList.find(m => {
+          m.archivistId === archivistId;
+        });
       });
-      console.log({imgList})
-      console.log({result});
 
       // console.log(material.find(m => m.archivistId === archivistId));
 
       return newMaterial;
+    },
+
+    addNewMaterial(root: any, { newMaterial }: any) {
+      console.log({ root });
+      console.log({ newMaterial });
+   
+      materialList.push(newMaterial);
+      return materialList[0];
     },
   },
 };

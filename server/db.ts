@@ -1,4 +1,4 @@
-export type keyword = {
+export type Keyword = {
   id: string;
   keyword: string;
 };
