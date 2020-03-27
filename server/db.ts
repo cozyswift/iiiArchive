@@ -35,10 +35,44 @@ export type Material = {
   identificationNum: string[];
 };
 
+export type Archivist={
+  id:string;
+  name:string;
+  archivistId:string;
+  eMail:string;
+}
+
+
+export const archivists:Archivist[]=[];
 export const imgList: ImageArr[] = [];
 export const materialList: Material[] = [];
 
 export const resetDB = () => {
+  archivists.splice(
+    0,
+    Infinity,
+    ...[
+      {
+        id: '1',
+        name: '주강민',
+        archivistId:'cozyswift',
+        eMail:'cozyswift@gmail.com'
+      },
+      {
+        id: '2',
+        name: '주강수',
+        archivistId:'sleepist',
+        eMail:'sleepist@gmail.com'
+      },
+      {
+        id: '3',
+        name: '조수정',
+        archivistId:'jsj4525',
+        eMail:'jsj4515@gmail.com'
+      },
+    ]
+  );
+
   imgList.splice(
     0,
     Infinity,

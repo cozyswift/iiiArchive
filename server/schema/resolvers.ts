@@ -7,8 +7,9 @@ import {
   MaterialTypes,
   Keyword,
 } from '../db';
+import { Resolvers } from '../types/graphql';
 // import {Resolvers}from '../types/graphql'
-const resolvers = {
+const resolvers: Resolvers = {
   DateTime: DateTimeResolver,
   URL: URLResolver,
 
@@ -17,8 +18,8 @@ const resolvers = {
     //   return materialTypes.find(mTypes => mTypes.typeName === 'jpg');
     // },
 
-    picture(root: { id: string }) {
-      const result = imgList.filter(img => img.materialId == root.id);
+    picture(root) {
+      const result = imgList.filter(img => img.materialId == root.id) || null;
 
       return result;
     },
@@ -35,7 +36,7 @@ const resolvers = {
       return materialList;
     },
 
-    material(root: any, { materialId }: any) {
+    material(root, { materialId }) {
       const result = materialList.find(m => m.id === materialId);
 
       return result || null;
@@ -116,12 +117,24 @@ const resolvers = {
       return newMaterial;
     },
 
-    addNewMaterial(root: any, { newMaterial }: any) {
+    addNewMaterial(root, { newMaterial }:any, { pubsub }) {
       console.log({ root });
       console.log({ newMaterial });
-   
+
       materialList.push(newMaterial);
+
+      // pubsub.publish('materialAdded', {
+      //   materialAdded: newMaterial,
+      // });
+
       return materialList[0];
+    },
+  },
+
+  Subscription: {
+    materialAdded: {
+      subscribe: (root, args, { pubsub }) =>
+        pubsub.asyncIterator('materialAdded'),
     },
   },
 };

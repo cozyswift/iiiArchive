@@ -43,11 +43,11 @@ input InputImageArr {
 
 type Material {
     id:ID!
-    archivistId:String!
-    title:String!
+    archivistId:String
+    title:String
     description:String
-    picture:[ImageArr]!
-    createdAt:DateTime!
+    picture:[ImageArr]
+    createdAt:DateTime
     creator:String
     materialType:MaterialType
     donor:[String!]
@@ -72,18 +72,22 @@ input InputMaterial {
 
 type Archivist {
     id:ID!
-    archivistId:ID!
     name:String!
-    material:[Material!]
+    archivistId:ID!
+    eMail:String
 }
 
 type Query {
     materialList:[Material]
     material(materialId:ID!):Material
-    archivist:Archivist
+    archivist:[Archivist]
 }
 
 type Mutation {
     addMaterial(title:String,archivistId:String):Material
     addNewMaterial(newMaterial:InputMaterial):Material
+}
+
+type Subscription {
+    materialAdded:Material!
 }

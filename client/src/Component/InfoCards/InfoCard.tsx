@@ -1,12 +1,26 @@
 import React from "react";
-import { makeStyles, Theme, createStyles, Grid, Paper, Card, CardContent, Typography, CardActionArea, Button, CardActions, CardMedia } from "@material-ui/core";
+import {
+  makeStyles,
+  Theme,
+  createStyles,
+  Grid,
+  Paper,
+  Card,
+  CardContent,
+  Typography,
+  CardActionArea,
+  Button,
+  CardActions,
+  CardMedia
+} from "@material-ui/core";
 import { useCallback } from "react";
 import { History } from "history";
 import { useApolloClient, useQuery } from "@apollo/react-hooks";
-// import { useGetMaterialListQuery } from "../../graphql/types";
 import * as queries from "../../graphql/queries";
 import { material } from "../../graphql/fragment";
 import SVGBorder from "./SVGBorder";
+import { useGetMaterialListQuery } from "../../graphql/types";
+import gql from "graphql-tag";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -58,47 +72,28 @@ interface MaterialsListProps {
   history: History;
 }
 
-// export const getMaterialList = gql`
-//   query GetMaterialList {
-//     materialList {
-//       id
-//       title
-//       archivistId
-//       keyword
-//       picture {
-//         examUrl
-//       }
-//     }
-//   }
-
-// `;
+export const getMaterialList = gql`
+  query GetMaterialList {
+    materialList {
+      id
+      title
+      archivistId
+      keyword
+      picture {
+        examUrl
+      }
+    }
+  }
+`;
 
 function InfoCard({ history }: MaterialsListProps) {
   const classes = useStyles();
   const client = useApolloClient();
-  const { loading, error, data } = useQuery<any>(queries.materialList);
+  const { loading, error, data } = useQuery<any>(getMaterialList);
 
   // const { loading, error, data } = useGetMaterialListQuery();
 
-  // const [materials, setMaterials] = useState<any>([]);
 
-  // useMemo(async () => {
-  //   const body = await fetch("http://localhost:4000/graphql", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json"
-  //     },
-  //     body: JSON.stringify({ query: getMaterials })
-  //   });
-
-  //   const {
-  //     data: { materials }
-  //   } = await body.json();
-  //   console.log(materials);
-
-  //   // const materials = await body.json();
-  //   setMaterials(materials);
-  // }, []);
 
   const navToMaterials = useCallback(
     material => {
@@ -111,7 +106,7 @@ function InfoCard({ history }: MaterialsListProps) {
 
   if (error) {
     console.log(error.message);
-    return <div className={"posts-error-message"}>error occured!</div>;
+    return <div className={"posts-error-message"}>{error.message}</div>;
   }
 
   if (data === undefined || data.materialList === undefined) {
@@ -126,10 +121,6 @@ function InfoCard({ history }: MaterialsListProps) {
       materialList
     }
   });
-
-  // console.log("1", client.store);
-
-  // console.log(materialList);
 
   return (
     <Grid container direction="row" justify="center" alignItems="center">
@@ -166,7 +157,7 @@ function InfoCard({ history }: MaterialsListProps) {
           </Card>
         </Paper>
       ))}
-    </Grid>   
+    </Grid>
   );
 }
 

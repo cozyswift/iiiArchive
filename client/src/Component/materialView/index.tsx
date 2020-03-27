@@ -7,6 +7,7 @@ import { History } from "history";
 import gql from "graphql-tag";
 import { useApolloClient, useQuery } from "@apollo/react-hooks";
 import AddMaterials from "../addMaterials";
+import {useGetMaterialQueryQuery} from '../../graphql/types'
 
 export const getMaterialQuery = gql`
   query getMaterialQuery($materialId: ID!) {
@@ -81,6 +82,10 @@ function MaterialView({ materialId, match, history }: MaterialViewParams) {
 
   //   setMaterial(material);
   // }, [materialId]);
+
+  // const { loading, error, data } = useQuery<any>(getMaterialQuery, {
+  //   variables: { materialId }
+  // });
 
   const { loading, error, data } = useQuery<any>(getMaterialQuery, {
     variables: { materialId }
