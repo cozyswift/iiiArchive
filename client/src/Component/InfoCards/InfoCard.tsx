@@ -19,7 +19,8 @@ import { useApolloClient, useQuery } from "@apollo/react-hooks";
 import * as queries from "../../graphql/queries";
 import { material } from "../../graphql/fragment";
 import SVGBorder from "./SVGBorder";
-import { useGetMaterialListQuery } from "../../graphql/types";
+import { useGetMaterialListQuery,useAddMaterialMutation } from "../../graphql/types";
+
 import gql from "graphql-tag";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -72,32 +73,32 @@ interface MaterialsListProps {
   history: History;
 }
 
-export const getMaterialList = gql`
-  query GetMaterialList {
-    materialList {
-      id
-      title
-      archivistId
-      keyword
-      picture {
-        examUrl
-      }
-    }
-  }
-`;
+// export const getMaterialList = gql`
+//   query GetMaterialList {
+//     materialList {
+//       id
+//       title
+//       archivistId
+//       keyword
+//       picture {
+//         examUrl
+//       }
+//     }
+//   }
+// `;
 
 function InfoCard({ history }: MaterialsListProps) {
   const classes = useStyles();
   const client = useApolloClient();
-  const { loading, error, data } = useQuery<any>(getMaterialList);
+  // const { loading, error, data } = useQuery<any>(getMaterialList);
 
-  // const { loading, error, data } = useGetMaterialListQuery();
+  const { loading, error, data } = useGetMaterialListQuery();
 
 
 
   const navToMaterials = useCallback(
     material => {
-      history.push(`materials/${material.id}`);
+      history.push(`${material.id}`);
     },
     [history]
   );

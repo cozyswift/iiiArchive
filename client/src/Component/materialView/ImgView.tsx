@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface ImageParam{
-  picture:Array<ImgArr>;
+  picture:any
 }
 
 function ImgView({picture}:ImageParam) {

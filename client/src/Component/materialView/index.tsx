@@ -7,20 +7,8 @@ import { History } from "history";
 import gql from "graphql-tag";
 import { useApolloClient, useQuery } from "@apollo/react-hooks";
 import AddMaterials from "../addMaterials";
-import {useGetMaterialQueryQuery} from '../../graphql/types'
-
-export const getMaterialQuery = gql`
-  query getMaterialQuery($materialId: ID!) {
-    material(materialId: $materialId) {
-      archivistId
-      title
-      description
-      picture {
-        examUrl
-      }
-    }
-  }
-`;
+import { useGetMaterialQuery } from "../../graphql/types";
+import * as queries from "../../graphql/queries";
 
 interface MaterialViewParams {
   materialId: string;
@@ -50,9 +38,8 @@ export interface MaterialQueryResult {
   id: string;
   archivistId: string;
   picture: Array<ImgArr>;
-  description:string;
-  title:string;
-
+  description: string;
+  title: string;
 }
 
 export type OptionalMaterialResult = MaterialQueryResult | null;
@@ -61,7 +48,6 @@ export type MaterialImgeResult = Array<ImgArr> | any;
 function MaterialView({ materialId, match, history }: MaterialViewParams) {
   const client = useApolloClient();
 
- 
   // const [material, setMaterial] = useState<OptionalMaterialResult>(null);
 
   // useMemo(async () => {
@@ -87,7 +73,11 @@ function MaterialView({ materialId, match, history }: MaterialViewParams) {
   //   variables: { materialId }
   // });
 
-  const { loading, error, data } = useQuery<any>(getMaterialQuery, {
+  // const { loading, error, data } = useQuery<any>(getMaterial, {
+  //   variables: { materialId }
+  // });
+
+  const { loading, error, data } = useGetMaterialQuery({
     variables: { materialId }
   });
 
@@ -98,13 +88,17 @@ function MaterialView({ materialId, match, history }: MaterialViewParams) {
     return <div className={"posts-error-message"}>error occured!</div>;
   }
 
-  const { material } = data;
+ 
+  if (!data) return null;
+
+  let material=data.material
 
 
-  if (!material) return null;
-
+  if(material===null||material===undefined){
+    return null;
+  }
   client.writeQuery({
-    query: getMaterialQuery,
+    query: queries.material,
     variables: { materialId },
     data: {
       material: {
@@ -113,15 +107,15 @@ function MaterialView({ materialId, match, history }: MaterialViewParams) {
     }
   });
 
+  console.log({material})
   return (
     <Container>
       <AddMaterials material={material} />
       <MaterialNavbar history={history} />
       <TextView material={material}></TextView>
-      {material.picture && (
-        <ImageView picture={material.picture}></ImageView>
-      )}
+      {material.picture && <ImageView picture={material.picture}></ImageView>}
     </Container>
+  
   );
 }
 

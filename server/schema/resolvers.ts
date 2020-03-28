@@ -117,15 +117,17 @@ const resolvers: Resolvers = {
       return newMaterial;
     },
 
-    addNewMaterial(root, { newMaterial }:any, { pubsub }) {
+    addNewMaterial(root, { newMaterial }: any, { pubsub }) {
       console.log({ root });
       console.log({ newMaterial });
 
       materialList.push(newMaterial);
+      newMaterial.id=materialList.length+1;
+      console.log(newMaterial)
 
-      // pubsub.publish('materialAdded', {
-      //   materialAdded: newMaterial,
-      // });
+      pubsub.publish('materialAdded', {
+        materialAdded: newMaterial,
+      });
 
       return materialList[0];
     },

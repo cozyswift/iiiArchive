@@ -8,46 +8,20 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
 import { useState } from "react";
-import gql from "graphql-tag";
-import { useMutation } from "@apollo/react-hooks";
-
-// import { useAddMaterialMutation,GetMaterialListQuery } from "../../graphql/types";
 import * as queries from "../../graphql/queries";
 import MaterialInputType from "./MaterialInputType/index";
-
-// const getArchivistID = gql`
-// query GetArchivistID($materialsId:Any){
-//     archivistID(materialsId:$materialsId){
-//         mate
-//     }
-// }
-// `;
-
-const addMaterialMutation = gql`
-  mutation AddMaterial($title: String!, $archivistId: String!) {
-    addMaterial(title: $title, archivistId: $archivistId) {
-      title
-      archivistId
-    }
-  }
-`;
-
-const addNewMaterialMutation = gql`
-  mutation AddNewMaterial($newMaterial: InputMaterial) {
-    addNewMaterial(newMaterial: $newMaterial) {
-      id
-      title
-      archivistId
-      description
-    }
-  }
-`;
+import { useAddNewMaterialMutation, Material } from "../../graphql/types";
+import { ImgArr } from "../materialView";
+import { writeMaterial } from "../../services/cache.service";
 
 interface AddMaterialsParam {
-  material?: {
-    id?: string;
-    archivistId?: string;
-  };
+  // material?: {
+  //   id?: string;
+  //   archivistId?: string;
+  //   description?:string;
+  //   imgArr?:any;
+  // };
+  material: any;
 }
 
 interface MaterialListResult {
@@ -56,20 +30,6 @@ interface MaterialListResult {
 
 function AddMaterials({ material }: AddMaterialsParam) {
   const [open, setOpen] = useState(false);
-  // const [titleValue, setTitleValue] = useState<string>("");
-  // const [newMaterial, setNewMaterial] = useState<any>({
-  //   id: "",
-  //   archivistId: "",
-  //   title: "",
-  //   description: "",
-  //   picture: [],
-  //   createdAt: new Date(Date.now() - 60 * 1000 * 1000),
-  //   creator: "",
-  //   materialType: "",
-  //   donor: "",
-  //   keyword: "",
-  //   identificationNum: []
-  // });
 
   const [newMaterial, setNewMaterial] = useState<any>({
     title: "test",
@@ -103,7 +63,9 @@ function AddMaterials({ material }: AddMaterialsParam) {
 
   // const [addMaterial] = useAddMaterialMutation();
 
-  const [addNewMaterial] = useMutation(addNewMaterialMutation);
+  // const [addNewMaterial] = useMutation(addNewMaterialMutation);
+
+  const [addNewMaterial] = useAddNewMaterialMutation();
 
   const onMaterialChange = ({ target }: any) => {
     setNewMaterial({
@@ -188,40 +150,44 @@ function AddMaterials({ material }: AddMaterialsParam) {
           // identificationNum: newMaterial.identificationNum
         }
       },
-      optimisticResponse: {
-        __typename: "Mutation",
-        addNewMaterial: {
-          __typename: "InputMaterial",
-          archivistId: newMaterial.archivistId,
-          title: newMaterial.title,
-          description: newMaterial.description
-        }
-      },
+      // optimisticResponse: {
+      //   __typename: "Mutation",
+      //   addNewMaterial: {
+      //     __typename: "Material",
+      //     id: "7",
+      //     title: newMaterial.title,
+      //     archivistId: newMaterial.archivistId,
+      //     description: newMaterial.description
+      //   }
+      // },
 
       update: (client, { data }) => {
-        let clientMaterialListData;
-        try {
-          clientMaterialListData = client.readQuery({
-            query: queries.materialList
-          });
-        } catch (e) {
-          return;
-        }
+        if (data && data.addNewMaterial)
+          // let clientMaterialListData;
+          // try {
+          //   clientMaterialListData = client.readQuery({
+          //     query: queries.materialList
+          //   });
+          // } catch (e) {
+          //   return;
+          // }
 
-        if (!clientMaterialListData || clientMaterialListData === null) {
-          return null;
-        }
+          // if (!clientMaterialListData || clientMaterialListData === null) {
+          //   return null;
+          // }
 
-        if (!clientMaterialListData || clientMaterialListData === undefined) {
-          return null;
-        }
+          // if (!clientMaterialListData || clientMaterialListData === undefined) {
+          //   return null;
+          // }
 
-        client.writeQuery({
-          query: queries.materialList,
-          data: {
-            materialList: clientMaterialListData
-          }
-        });
+          // client.writeQuery({
+          //   query: queries.materialList,
+          //   data: {
+          //     materialList: clientMaterialListData
+          //   }
+          // });
+
+          writeMaterial(client, data.addNewMaterial);
       }
     });
 

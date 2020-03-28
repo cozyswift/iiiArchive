@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface TexitViewParm{
-  material:OptionalMaterialResult
+  material:any
 }
 
 
