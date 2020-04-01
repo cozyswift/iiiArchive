@@ -98,7 +98,7 @@ function InfoCard({ history }: MaterialsListProps) {
 
   const navToMaterials = useCallback(
     material => {
-      history.push(`${material.id}`);
+      history.push(`materials/${material.id}`);
     },
     [history]
   );

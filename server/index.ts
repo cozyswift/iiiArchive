@@ -1,47 +1,63 @@
 import { ApolloServer, gql, PubSub } from "apollo-server-express";
-import cors from "cors";
-import express from "express";
-import { materialList, archivists } from "./db";
+import { archivists } from "./db";
 import schema from "./schema";
-import cookieParser from "cookie-parser";
-
-const app = express();
-
-const origin = process.env.ORIGIN || "http://localhost:3000";
-app.use(cors({ credentials: true, origin }));
-app.use(express.json());
-app.use(cookieParser());
-// app.get("/_ping", (req, res) => {
-//   res.send("pong");
-// });
-
-// app.get("/materials", (req, res) => {
-//   res.json(materialList);
-// });
+import cookie from "cookie";
+import http from "http";
+import { app } from "./app";
+import { origin, port, secret } from "./env";
+import jwt from "jsonwebtoken";
 
 const pubsub = new PubSub();
 const server = new ApolloServer({
   schema,
   context: (session: any) => {
-    // let req = session.connection
-    //   ? session.connection.context.request
-    //   : session.req;
+    //요청객체에 엑세스
+    let req = session.connection
+      ? session.connection.context.request
+      : session.req;
+
+    //구독
+
+    if (session.connection) {
+      req.cookies = cookie.parse(req.headers.cookie || "");
+    }
+    let cookies = req.cookies;
+
+    let currentArchivist;
+    if (req.cookies.authToken) {
+      const archivistId = jwt.verify(req.cookies.authToken, secret) as string;
+      currentArchivist =
+        archivistId && archivists.find(a => a.archivistId === archivistId);
+    }
+
+    console.log({currentArchivist})
 
     return {
       pubsub,
-      archivist: archivists.find(a => a.id === "")
+      currentArchivist,
+      res: session.res
     };
+  },
+
+  subscriptions: {
+    onConnect(params, ws, ctx) {
+      // 요청객체를 콘텍스트로 넘긴다.
+      return {
+        request: ctx.request
+      };
+    }
   }
 });
 
 server.applyMiddleware({
   app,
   path: "/graphql",
-  cors:{credentials:true,origin}
+  cors: { credentials: true, origin }
 });
 
-const port = process.env.PORT || 4000;
+const httpServer = http.createServer(app);
+server.installSubscriptionHandlers(httpServer);
 
-app.listen(port, () => {
+httpServer.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
 });

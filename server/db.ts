@@ -35,15 +35,25 @@ export type Material = {
   identificationNum: string[];
 };
 
-export type Archivist={
-  id:string;
-  name:string;
-  archivistId:string;
-  eMail:string;
-}
+export type Archivist = {
+  id: string;
+  name: string;
+  archivistId: string;
+  eMail: string;
+  picture: string;
+  password: string;
+};
 
+export type User = {
+  id: string;
+  name: string;
+  eMail: string;
+  archivist: false;
+  password: string;
+};
 
-export const archivists:Archivist[]=[];
+export const user: User[] = [];
+export const archivists: Archivist[] = [];
 export const imgList: ImageArr[] = [];
 export const materialList: Material[] = [];
 
@@ -53,23 +63,32 @@ export const resetDB = () => {
     Infinity,
     ...[
       {
-        id: '1',
-        name: '주강민',
-        archivistId:'cozyswift',
-        eMail:'cozyswift@gmail.com'
+        id: "1",
+        name: "주강민",
+        archivistId: "cozyswift",
+        eMail: "cozyswift@gmail.com",
+        password:
+          "$2a$08$NO9tkFLCoSqX1c5wk3s7z.JfxaVMKA.m7zUDdDwEquo4rvzimQeJm", // 111
+        picture: "https://randomuser.me/api/portraits/thumb/lego/1.jpg"
       },
       {
-        id: '2',
-        name: '주강수',
-        archivistId:'sleepist',
-        eMail:'sleepist@gmail.com'
+        id: "2",
+        name: "주강수",
+        archivistId: "sleepist",
+        eMail: "sleepist@gmail.com",
+        password:
+          "$2a$08$xE4FuCi/ifxjL2S8CzKAmuKLwv18ktksSN.F3XYEnpmcKtpbpeZgO", // 222
+        picture: "https://randomuser.me/api/portraits/thumb/men/1.jpg"
       },
       {
-        id: '3',
-        name: '조수정',
-        archivistId:'jsj4525',
-        eMail:'jsj4515@gmail.com'
-      },
+        id: "3",
+        name: "조수정",
+        archivistId: "jsj4525",
+        eMail: "jsj4515@gmail.com",
+        password:
+          "$2a$08$UHgH7J8G6z1mGQn2qx2kdeWv0jvgHItyAsL9hpEUI3KJmhVW5Q1d.", // 333
+        picture: "https://randomuser.me/api/portraits/thumb/men/2.jpg"
+      }
     ]
   );
 
@@ -143,7 +162,8 @@ export const resetDB = () => {
         id: "2",
         archivistId: "주강민",
         title: "170310 촛불승리 시국집회",
-        description: "박근혜 파면이 결정된 3월 10일의 131차 시국집회의 모습이다.",
+        description:
+          "박근혜 파면이 결정된 3월 10일의 131차 시국집회의 모습이다.",
         picture: [imgList.find(img => img.materialId[1] === "2")],
         createdAt: new Date(Date.now() - 60 * 1000 * 1000),
         creator: "",
@@ -164,14 +184,9 @@ export const resetDB = () => {
           "pi003-B-00104",
           "pi003-B-00105"
         ]
-      },
+      }
     ]
   );
 };
 
 resetDB();
-
-
-
-
-

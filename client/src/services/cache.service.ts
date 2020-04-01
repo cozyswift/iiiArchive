@@ -10,7 +10,7 @@ import {
 } from "../graphql/types";
 import { type } from "os";
 
-type Client = DataProxy 
+type Client = DataProxy;
 
 export function useCacheService() {
   useMaterialAddedSubscription({
@@ -20,51 +20,36 @@ export function useCacheService() {
     //(options: OnSubscriptionDataOptions<TData>) => any
     onSubscriptionData: ({ client, subscriptionData: { data } }) => {
       if (data) {
-        writeMaterial(client, data.materialAdded);
+        writeMaterialList(client);
       }
     }
   });
 }
 
-export function writeMaterial(client: Client, material: MaterialFragment) {
-  type MaterialList = { [key: string]: any };
-  let materialList: any;
+export function writeMaterialList(client: Client) {
 
-  const materialIdFromStore = defaultDataIdFromObject(material);
-
-  console.log(materialIdFromStore);
-  if (materialIdFromStore === null) {
-    return;
-  }
+  let data: any;
 
   try {
-    materialList = client.readFragment<Material>({
-      id: materialIdFromStore,
-      fragment: fragments.materialList,
-      fragmentName: "MaterialList"
+    data = client.readQuery({
+      query: queries.materialList
     });
-
-    console.log({materialList});
   } catch (e) {
     return;
   }
 
-  if (materialList === null) {
-    return;
+  console.log(data);
+  if (!data || data === null) {
+    return null;
   }
 
-  if(materialList.some((m:any)=>m.id===material.id)) return;
+  if (!data.materialList || data.materialList === undefined) {
+    return null;
+  }
 
-  materialList.push(material);
 
-
-  client.writeFragment({
-      id:materialIdFromStore,
-      fragment:fragments.materialList,
-      fragmentName:'MaterialList',
-      data:materialList,
+  client.writeQuery({
+    query: queries.materialList,
+    data: { materialList: data }
   });
-
-
-  
 }

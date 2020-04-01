@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, ComponentProps } from "react";
 import { Container } from "@material-ui/core";
 import TextView from "./TextView";
 import ImageView from "./ImgView";
@@ -6,13 +6,18 @@ import MaterialNavbar from "./MaterialNavBar";
 import { History } from "history";
 import gql from "graphql-tag";
 import { useApolloClient, useQuery } from "@apollo/react-hooks";
-import AddMaterials from "../addMaterials";
+import AddMaterials, { AddMaterialsParam } from "../addMaterials";
 import { useGetMaterialQuery } from "../../graphql/types";
 import * as queries from "../../graphql/queries";
+import {
+  isSignedIn
+} from "../../services/auth.service";
+import { ComponentsProps } from "@material-ui/core/styles/props";
+import { RouteComponentProps } from "react-router-dom";
+import { DefaultComponentProps } from "@material-ui/core/OverridableComponent";
 
 interface MaterialViewParams {
   materialId: string;
-  match: any;
   history: History;
 }
 
@@ -45,9 +50,9 @@ export interface MaterialQueryResult {
 export type OptionalMaterialResult = MaterialQueryResult | null;
 export type MaterialImgeResult = Array<ImgArr> | any;
 
-function MaterialView({ materialId, match, history }: MaterialViewParams) {
+function MaterialView({ materialId, history }: MaterialViewParams) {
   const client = useApolloClient();
-
+  console.log({ materialId });
   // const [material, setMaterial] = useState<OptionalMaterialResult>(null);
 
   // useMemo(async () => {
@@ -83,18 +88,17 @@ function MaterialView({ materialId, match, history }: MaterialViewParams) {
 
   if (loading) return <div>...loading</div>;
 
+  console.log(data);
   if (error) {
     console.log(error.message);
     return <div className={"posts-error-message"}>error occured!</div>;
   }
 
- 
   if (!data) return null;
 
-  let material=data.material
+  let material = data.material;
 
-
-  if(material===null||material===undefined){
+  if (material === null || material === undefined) {
     return null;
   }
   client.writeQuery({
@@ -106,16 +110,15 @@ function MaterialView({ materialId, match, history }: MaterialViewParams) {
       }
     }
   });
-
-  console.log({material})
+  let trueOrFalse = isSignedIn();
+  console.log({trueOrFalse})
   return (
     <Container>
-      <AddMaterials material={material} />
+      {trueOrFalse && <AddMaterials material={material} />}
       <MaterialNavbar history={history} />
       <TextView material={material}></TextView>
       {material.picture && <ImageView picture={material.picture}></ImageView>}
     </Container>
-  
   );
 }
 

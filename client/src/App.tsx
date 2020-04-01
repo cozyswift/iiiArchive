@@ -7,11 +7,13 @@ import {
   BrowserRouter,
   Route,
   Redirect,
-
   RouteComponentProps
 } from "react-router-dom";
 import MaterialView from "./Component/materialView";
-import AnimatedSwitch from './Component/AnimatedSwitch';
+import AnimatedSwitch from "./Component/AnimatedSwitch";
+import { useCacheService } from "./services/cache.service";
+import AuthScreen from "./Component/AuthScreen";
+import { withAuth } from "./services/auth.service";
 
 const OneSecContainer = styled(Grid)`
   background-color: #1e1e1e;
@@ -21,21 +23,38 @@ const OneSecContainer = styled(Grid)`
 const redirectToChats = () => <Redirect to="/materials" />;
 
 function App() {
+  useCacheService();
   return (
     <BrowserRouter>
       <AnimatedSwitch>
-     
+        <Route exact path="/sign-(in|up)" component={AuthScreen} />
         <Route exact path="/materials" component={InfoCards} />
+        {/* <Route
+          exact
+          path="/materials/:materialId"
+          component={withAuth(({
+            match,
+            history
+          }: RouteComponentProps<{ materialId: string }>) => (
+            <MaterialView
+              materialId={match.params.materialId}
+              history={history}
+            />
+          ))}
+        /> */}
         <Route
           exact
           path="/materials/:materialId"
           component={({
-            match,history
+            match,
+            history
           }: RouteComponentProps<{ materialId: string }>) => (
-            <MaterialView materialId={match.params.materialId} match={match} history={history}/>
+            <MaterialView
+              materialId={match.params.materialId}
+              history={history}
+            />
           )}
         />
-       
       </AnimatedSwitch>
       <Route exact path="/" render={redirectToChats} />
     </BrowserRouter>

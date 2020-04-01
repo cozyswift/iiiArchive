@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 
-export default gql`
+export default  gql`
   query getMaterial($materialId: ID!) {
     material(materialId: $materialId) {
       archivistId

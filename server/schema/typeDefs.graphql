@@ -75,17 +75,21 @@ type Archivist {
     name:String!
     archivistId:ID!
     eMail:String
+    picture:String
 }
 
 type Query {
+    me:Archivist
     materialList:[Material]
     material(materialId:ID!):Material
-    archivist:[Archivist]
+    archivist:[Archivist!]!
 }
 
 type Mutation {
     addMaterial(title:String,archivistId:String):Material
     addNewMaterial(newMaterial:InputMaterial):Material
+    signIn(archivistID:String!,archivistPW:String!):Archivist
+    signUp(archivistID:String!,archivistPW:String!,eMail:String!,name:String!, passwordConfirm: String!):Archivist
 }
 
 type Subscription {

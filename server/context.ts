@@ -1,6 +1,9 @@
-import { PubSub } from 'apollo-server-express';
-import { Archivist } from './db';
+import { PubSub } from "apollo-server-express";
+import { Archivist } from "./db";
+import { Response } from "express";
+
 export type MyContext = {
   pubsub: PubSub;
-  currentArchhivist: Archivist;
+  currentArchivist: Archivist;
+  res: Response;
 };

@@ -1,22 +1,71 @@
-import {useCallback} from 'react'
-import {useApolloClient} from '@apollo/react-hooks'
+import React, { ReactNode, ComponentType } from "react";
+import { useContext, useCallback } from "react";
+import { useApolloClient } from "@apollo/react-hooks";
+import { Redirect } from "react-router-dom";
+import { useCacheService } from "./cache.service";
+import {
+  useSignInMutation,
+  Archivist,
+  useMeQuery,
+  useSignUpMutation
+} from "../graphql/types";
 
-export const signIn=(currentArchivistId:string)=>{
-    document.cookie=`currentUserId=${currentArchivistId};`
+const MyContext = React.createContext<Archivist | null>(null);
 
-    return Promise.resolve();
+export function useMe() {
+  return useContext(MyContext);
 }
 
-export const useSignOut=()=>{
-    const client=useApolloClient();
+export function withAuth<P extends object>(Component: React.ComponentType<P>) {
+  return (props: any) => {
+    if (!isSignedIn()) {
+      if (props.history.location.pathname === "/sign-in") {
+        return null;
+      }
+      return <Redirect to="/sign-in" />;
+    }
 
+    const signOut = useSignOut();
+    const { data, error, loading } = useMeQuery();
+    useCacheService();
 
-    return useCallback(()=>{
-        document.cookie = `currentUserId=;expires=${new Date(0)}`;
-        return client.clearStore();
-    },[client])
-}
+    if (loading) return null;
+    if (data === undefined) return null;
+    if (error || !data.me) {
+      signOut();
+      return <Redirect to="/sign-in" />;
+    }
 
-export const isSignedIn = () => {
-    return /currentUserId=.+(;|$)/.test(document.cookie);
+    return (
+      <MyContext.Provider value={data.me}>
+        <Component {...(props as P)} />
+      </MyContext.Provider>
+    );
   };
+}
+
+// export function signIn(authToken: string) {
+//   document.cookie = `authToken=${authToken}`;
+//   console.log(document.cookie);
+//   return Promise.resolve();
+// }
+
+export const useSignIn = useSignInMutation;
+export const useSignUp = useSignUpMutation;
+
+export function useSignOut() {
+  const client = useApolloClient();
+
+  return useCallback(() => {
+    // "expires" represents the lifespan of a cookie. Beyond that date the cookie will
+    // be deleted by the browser. "expires" cannot be viewed from "document.cookie"
+    document.cookie = `authToken=;expires=${new Date(0)}`;
+
+    // Clear cache
+    return client.clearStore();
+  }, [client]);
+}
+
+export function isSignedIn() {
+  return /authToken=.+(;|$)/.test(document.cookie);
+}

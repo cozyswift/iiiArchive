@@ -15,6 +15,7 @@ generates:
         ImageArr: ../db#ImageArr
         MaterialTypes: ../db#MaterialTypes        
         Material: ../db#Material
+        Archivist: ../db#Archivist
 
 
       scalars:

@@ -6,18 +6,21 @@ import {
   ImageArr,
   MaterialTypes,
   Keyword,
+  archivists,
+  Archivist,
 } from '../db';
 import { Resolvers } from '../types/graphql';
-// import {Resolvers}from '../types/graphql'
+import { withFilter } from 'apollo-server-express';
+import { secret, expiration } from '../env';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { validateLength, validatePassword } from '../validators';
+
 const resolvers: Resolvers = {
   DateTime: DateTimeResolver,
   URL: URLResolver,
 
   Material: {
-    // materialType(typeId: any) {
-    //   return materialTypes.find(mTypes => mTypes.typeName === 'jpg');
-    // },
-
     picture(root) {
       const result = imgList.filter(img => img.materialId == root.id) || null;
 
@@ -25,34 +28,78 @@ const resolvers: Resolvers = {
     },
   },
 
-  // Materials: {
-  //   material(findMaterial: any) {
-  //     return material.find(m => m.id === findMaterial.id);
-  //   },
-  // },
-
   Query: {
+    me(root, args, { currentArchivist }) {
+      return currentArchivist || null;
+    },
     materialList() {
       return materialList;
     },
 
-    material(root, { materialId }) {
+    material(root, { materialId }, { currentArchivist }) {
       const result = materialList.find(m => m.id === materialId);
 
       return result || null;
     },
 
-    // archivistID({ archivistId }: any){
-    //   const findMaterial=materials.find(mts=>mts.id===archivistId);
-    //   if(findMaterial && findMaterial.archivist){
-    //     const result=material.find(material=>material.archivistId===findMaterial.archivist);
-    //     const archivist=result?.archivistId;
-    //     return archivist;
-    //   }
-    // }
+    archivist(root, args, { currentArchivist }) {
+      if (!currentArchivist) return [];
+
+      return archivists.filter(a => a.id !== currentArchivist.id);
+    },
   },
 
   Mutation: {
+    signIn(root, { archivistID, archivistPW }, { res }) {
+      const archivist = archivists.find(
+        people => people.archivistId === archivistID
+      );
+
+      if (!archivist) {
+        throw new Error(`아키비스트를 찾을 수 없습니다.`);
+      }
+      const passwordsMatch = bcrypt.compareSync(
+        archivistID,
+        archivist.password
+      );
+
+      console.log({passwordsMatch})
+      if (!passwordsMatch) {
+        throw new Error('비밀번호가 다릅니다');
+      }
+      const authToken = jwt.sign(archivistID, secret);
+
+      res.cookie('authToken', authToken, { maxAge: expiration });
+
+      return archivist;
+    },
+
+    signUp(root, { name, archivistID, archivistPW, passwordConfirm, eMail }) {
+      console.log({name})
+      validateLength('req.name', name, 3, 50);
+      validateLength('req.username', archivistID, 3, 18);
+      validatePassword('req.password', archivistPW);
+
+      if (archivistPW !== passwordConfirm) {
+        throw Error("req.password and req.passwordConfirm don't match");
+      }
+
+      if (archivists.some(u => u.archivistId === archivistID)) {
+        throw Error('username already exists');
+      }
+      const passwordHash = bcrypt.hashSync(archivistPW, bcrypt.genSaltSync(8));
+      const archivist: Archivist = {
+        id: String(archivists.length + 1),
+        password: passwordHash,
+        picture: '',
+        archivistId: archivistID,
+        name,
+        eMail: '',
+      };
+      archivists.push(archivist);
+      return archivist;
+    },
+
     addMaterial(root: any, { title, archivistId }: any) {
       console.log('root', { root });
       console.log('title', { title });
@@ -103,8 +150,7 @@ const resolvers: Resolvers = {
 
       materialList.push(newMaterial);
 
-      // console.log({imageArr})
-      // console.log({material});
+     
 
       const result = materialList.map(m => {
         materialList.find(m => {
@@ -112,31 +158,40 @@ const resolvers: Resolvers = {
         });
       });
 
-      // console.log(material.find(m => m.archivistId === archivistId));
+
 
       return newMaterial;
     },
 
-    addNewMaterial(root, { newMaterial }: any, { pubsub }) {
+    addNewMaterial(root, { newMaterial }: any, { pubsub, currentArchivist }) {
+      if (!currentArchivist) return null;
       console.log({ root });
       console.log({ newMaterial });
 
       materialList.push(newMaterial);
-      newMaterial.id=materialList.length+1;
-      console.log(newMaterial)
+      newMaterial.id = materialList.length + 1;
+      console.log(newMaterial);
 
       pubsub.publish('materialAdded', {
         materialAdded: newMaterial,
       });
 
-      return materialList[0];
+      return newMaterial;
     },
   },
 
   Subscription: {
     materialAdded: {
-      subscribe: (root, args, { pubsub }) =>
-        pubsub.asyncIterator('materialAdded'),
+      subscribe: withFilter(
+        function resolverFn(root, args, { pubsub }) {
+          return pubsub.asyncIterator('materialAdded');
+        },
+        function fillterFn({ materialAdded }, args, { currentArchivist }) {
+          if (!currentArchivist) return false;
+
+          return [materialAdded.id].includes(currentArchivist.id);
+        }
+      ),
     },
   },
 };
