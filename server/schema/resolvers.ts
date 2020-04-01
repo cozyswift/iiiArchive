@@ -59,11 +59,11 @@ const resolvers: Resolvers = {
         throw new Error(`아키비스트를 찾을 수 없습니다.`);
       }
       const passwordsMatch = bcrypt.compareSync(
-        archivistID,
+        archivistPW,
         archivist.password
       );
 
-      console.log({passwordsMatch})
+      console.log({ passwordsMatch })
       if (!passwordsMatch) {
         throw new Error('비밀번호가 다릅니다');
       }
@@ -75,7 +75,7 @@ const resolvers: Resolvers = {
     },
 
     signUp(root, { name, archivistID, archivistPW, passwordConfirm, eMail }) {
-      console.log({name})
+      console.log({ name })
       validateLength('req.name', name, 3, 50);
       validateLength('req.username', archivistID, 3, 18);
       validatePassword('req.password', archivistPW);
@@ -150,7 +150,7 @@ const resolvers: Resolvers = {
 
       materialList.push(newMaterial);
 
-     
+
 
       const result = materialList.map(m => {
         materialList.find(m => {
